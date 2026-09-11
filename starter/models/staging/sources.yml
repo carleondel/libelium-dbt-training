@@ -1,0 +1,14 @@
+version: 2
+
+sources:
+  - name: app
+    description: Fictional application tables loaded before dbt runs.
+    database: "{{ target.database }}"
+    schema: "{{ target.schema }}"
+    tables:
+      - name: raw_customers
+        description: One row per fictional customer loaded before dbt runs.
+      - name: raw_orders
+        description: One row per fictional order loaded before dbt runs.
+      - name: raw_payments
+        description: Fictional payment snapshots; payment_id may repeat and an order may have multiple attempts.

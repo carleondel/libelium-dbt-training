@@ -1,0 +1,7 @@
+generic_dbt_sandbox:
+  target: local
+  outputs:
+    local:
+      type: duckdb
+      path: target/sandbox.duckdb
+      threads: 4

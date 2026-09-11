@@ -1,0 +1,24 @@
+name: generic_dbt_sandbox
+version: '1.0.0'
+config-version: 2
+
+profile: generic_dbt_sandbox
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+clean-targets:
+  - target
+  - dbt_packages
+
+models:
+  generic_dbt_sandbox:
+    staging:
+      +materialized: view
+    intermediate:
+      +materialized: ephemeral
+    marts:
+      +materialized: table

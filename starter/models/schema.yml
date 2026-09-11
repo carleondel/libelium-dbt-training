@@ -1,0 +1,126 @@
+version: 2
+
+models:
+  - name: stg_customers
+    description: "Standardized customer source. Grain: one row per customer."
+    columns:
+      - name: customer_id
+        description: Stable customer identifier.
+        data_tests:
+          - not_null
+          - unique
+      - name: country
+        description: Uppercase country code.
+      - name: segment
+        description: Normalized customer segment.
+      - name: signup_date
+        description: Date the fictional customer joined the application.
+
+  - name: stg_orders
+    description: "Standardized order source. Grain: one row per order."
+    columns:
+      - name: order_id
+        description: Stable order identifier.
+        data_tests:
+          - not_null
+          - unique
+      - name: customer_id
+        description: Customer associated with the order.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_customers')
+                field: customer_id
+      - name: status
+        description: Normalized order status.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['completed', 'pending', 'cancelled', 'refunded']
+      - name: amount
+        description: Order amount in fictional currency units.
+
+  - name: stg_payments
+    description: "Standardized payment snapshots. Grain: one row per source record."
+    columns:
+      - name: payment_id
+        description: Payment identifier; snapshots may repeat this key.
+        data_tests:
+          - not_null
+      - name: order_id
+        description: Order associated with the payment record.
+        data_tests:
+          - not_null
+      - name: payment_status
+        description: Latest status recorded for that payment attempt.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['paid', 'pending', 'failed', 'refunded', 'voided']
+      - name: payment_amount
+        description: Amount recorded by the payment system.
+      - name: payment_updated_at
+        description: Timestamp of the payment record update.
+
+  - name: int_customer_orders
+    description: Reusable order enrichment with customer attributes and a validity flag.
+    columns:
+      - name: order_id
+        description: Order identifier at order grain.
+        data_tests:
+          - not_null
+          - unique
+      - name: customer_id
+        description: Customer identifier used for enrichment.
+        data_tests:
+          - not_null
+      - name: is_valid
+        description: True when the order has a known customer and non-negative amount.
+        data_tests:
+          - not_null
+
+  - name: int_order_payments
+    description: "Starter payment model. The challenge deduplicates snapshots and aggregates to one row per order."
+    columns:
+      - name: payment_id
+        description: Payment identifier to deduplicate before the order-grain aggregation.
+        data_tests:
+          - not_null
+      - name: order_id
+        description: Order associated with the payment record.
+        data_tests:
+          - not_null
+      - name: payment_status
+        description: Payment status recorded by the source.
+      - name: payment_amount
+        description: Payment amount recorded by the source.
+      - name: payment_updated_at
+        description: Timestamp of the payment record update.
+
+  - name: fct_orders
+    description: "Starter order fact. Grain: one row per valid order."
+    columns:
+      - name: order_id
+        description: Unique order identifier.
+        data_tests:
+          - not_null
+          - unique
+      - name: customer_id
+        description: Customer key for joining a customer dimension.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_customers')
+                field: customer_id
+      - name: order_date
+        description: Date on which the order was placed.
+      - name: status
+        description: Order lifecycle status.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['completed', 'pending', 'cancelled', 'refunded']
+      - name: order_amount
+        description: Order amount in fictional currency units.

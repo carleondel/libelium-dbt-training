@@ -1,0 +1,16 @@
+customer_id,country,segment,signup_date
+c_001,ES,standard,2024-01-10
+c_002,PT,standard,2024-01-12
+c_003,FR,premium,2024-01-18
+c_004,DE,standard,2024-02-03
+c_005,IT,premium,2024-02-11
+c_006,NL,standard,2024-02-19
+c_007,ES,premium,2024-03-01
+c_008,BE,standard,2024-03-05
+c_009,IE,premium,2024-03-08
+c_010,SE,standard,2024-03-11
+c_011,DK,premium,2024-03-15
+c_012,AT,standard,2024-03-18
+c_013,PL,standard,2024-03-21
+c_014,FI,premium,2024-03-24
+c_015,LU,standard,2024-03-27
